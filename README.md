@@ -1,0 +1,1 @@
+# gradle-java-kotlin-barcode-sample
