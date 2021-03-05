@@ -9,36 +9,28 @@ import java.nio.file.*;
 
 public class App {
 
+    private BarcodeReader mBarcodeReader;
+
+    public App(String license) {
+        try {
+            mBarcodeReader = new BarcodeReader(license);
+        } catch (Exception e) {
+            //TODO: handle exception
+            e.printStackTrace();
+        }
+        
+    }
+
+    public BarcodeReader getBarcodeReader() {
+        return mBarcodeReader;
+    }
+
     public String getGreeting() {
         return "Hello Dynamsoft Barcode Reader!";
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(new App().getGreeting());
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
-
-        if (args.length == 0) {
-            String newLine = System.getProperty("line.separator");
-            String s = new StringBuilder()
-            .append("Usage:")
-            .append(newLine)
-            .append("    ./gradlew run --args=\"<image file> <license file>\"").append(newLine)
-            .toString();
-
-            System.out.println(s);
-            return;
-        }
-
-        String file = args[0];
-        String license = "";
-
-        if (args.length == 2) {
-            
-            license = new String(Files.readAllBytes(Paths.get(args[1]))); 
-        }
-
-        // Set license
-        BarcodeReader br = new BarcodeReader(license);
+    public TextResult[] decodeFile(String file) {
+        TextResult[] results = null;
         // Read barcode           
         try {
             //Best coverage settings
@@ -46,9 +38,9 @@ public class App {
             //Best speed settings
             //br.initRuntimeSettingsWithString("{\"ImageParameter\":{\"Name\":\"BestSpeed\",\"DeblurLevel\":3,\"ExpectedBarcodesCount\":512,\"LocalizationModes\":[{\"Mode\":\"LM_SCAN_DIRECTLY\"}],\"TextFilterModes\":[{\"MinImageDimension\":262144,\"Mode\":\"TFM_GENERAL_CONTOUR\"}]}}",EnumConflictMode.CM_OVERWRITE);
             //Balance settings
-            br.initRuntimeSettingsWithString("{\"ImageParameter\":{\"Name\":\"Balance\",\"DeblurLevel\":5,\"ExpectedBarcodesCount\":512,\"LocalizationModes\":[{\"Mode\":\"LM_CONNECTED_BLOCKS\"},{\"Mode\":\"LM_STATISTICS\"}]}}",EnumConflictMode.CM_OVERWRITE);
+            mBarcodeReader.initRuntimeSettingsWithString("{\"ImageParameter\":{\"Name\":\"Balance\",\"DeblurLevel\":5,\"ExpectedBarcodesCount\":512,\"LocalizationModes\":[{\"Mode\":\"LM_CONNECTED_BLOCKS\"},{\"Mode\":\"LM_STATISTICS\"}]}}",EnumConflictMode.CM_OVERWRITE);
             long start = System.currentTimeMillis();
-            TextResult[] results = br.decodeFile(file, "");
+            results = mBarcodeReader.decodeFile(file, "");
             long end = System.currentTimeMillis();
 
             if (results == null || results.length == 0) {
@@ -76,6 +68,36 @@ public class App {
         } catch (BarcodeReaderException e) {
             e.printStackTrace();
         }
+        
+        return results;
+    }
+
+    public static void main(String[] args) throws Exception {
+        
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
+        if (args.length == 0) {
+            String newLine = System.getProperty("line.separator");
+            String s = new StringBuilder()
+            .append("Usage:")
+            .append(newLine)
+            .append("    ./gradlew run --args=\"<image file> <license file>\"").append(newLine)
+            .toString();
+
+            System.out.println(s);
+            return;
+        }
+
+        String file = args[0];
+        String license = "";
+
+        if (args.length == 2) {
+            
+            license = new String(Files.readAllBytes(Paths.get(args[1]))); 
+        }
+        App app = new App(license);
+        System.out.println(app.getGreeting());
+        app.decodeFile(file);
 
     }
 }
