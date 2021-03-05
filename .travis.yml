@@ -12,8 +12,8 @@ branches:
 before_install:
   - if [[ ${TRAVIS_OS_NAME} == "windows" ]]; then
         choco install jdk8 -params 'installdir=c:\\jdk' -y;
-        export JAVA_HOME=${JAVA_HOME:-/c/jdk}
-        export PATH=${JAVA_HOME}/bin:${PATH}
+        export JAVA_HOME=${JAVA_HOME:-/c/jdk};
+        export PATH=${JAVA_HOME}/bin:${PATH};
     fi
 
 script:
