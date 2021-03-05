@@ -9,11 +9,22 @@ branches:
   only:
     - main
 
+before_install:
+  - if [[ ${TRAVIS_OS_NAME} == "windows" ]]; then
+        choco install jdk8 -params 'installdir=c:\\jdk' -y;
+        export JAVA_HOME=${JAVA_HOME:-/c/jdk}
+        export PATH=${JAVA_HOME}/bin:${PATH}
+    fi
+
 script:
-    - cd java
-    - ./gradlew test
-    - ./gradlew run --args="../../images/AllSupportedBarcodeTypes.png"
-    - cd .. 
-    - cd kotlin
-    - ./gradlew test
-    - ./gradlew run --args="../../images/AllSupportedBarcodeTypes.png"
+  - if [[ ${TRAVIS_OS_NAME} != "windows" ]]; then
+        chmod +x java/gradlew;
+        chmod +x kotlin/gradlew;
+    fi
+  - cd java
+  - ./gradlew test
+  - ./gradlew run --args="../../images/AllSupportedBarcodeTypes.png"
+  - cd .. 
+  - cd kotlin
+  - ./gradlew test
+  - ./gradlew run --args="../../images/AllSupportedBarcodeTypes.png"
