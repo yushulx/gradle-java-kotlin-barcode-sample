@@ -1,0 +1,19 @@
+language: java
+
+os:
+  - linux
+  - osx
+  - windows
+
+branches:
+  only:
+    - main
+
+script:
+    - cd java
+    - ./gradlew test
+    - ./gradlew run --args="../../images/AllSupportedBarcodeTypes.png"
+    - cd .. 
+    - cd kotlin
+    - ./gradlew test
+    - ./gradlew run --args="../../images/AllSupportedBarcodeTypes.png"
