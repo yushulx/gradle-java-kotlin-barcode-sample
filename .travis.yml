@@ -1,16 +1,22 @@
-os:
-  - windows
+language: java
+
+jobs:
+  include:
+    - name: "Linux"
+      os: linux
+    - name: "macOS"
+      os: osx
+    - name: "Windows"
+      os: windows           
+      language: shell       
+      before_install:
+        - choco install jdk8 -params 'installdir=c:\\jdk' -y;
+        - export JAVA_HOME=${JAVA_HOME:-/c/jdk};
+      env: PATH=/c/jdk/bin:$PATH
 
 branches:
   only:
     - main
-
-before_install:
-  - if [[ ${TRAVIS_OS_NAME} == "windows" ]]; then
-        choco install jdk8 -params 'installdir=c:\\jdk' -y;
-        export JAVA_HOME=${JAVA_HOME:-/c/jdk};
-        export PATH=${JAVA_HOME}/bin:${PATH};
-    fi
 
 script:
   - if [[ ${TRAVIS_OS_NAME} != "windows" ]]; then
